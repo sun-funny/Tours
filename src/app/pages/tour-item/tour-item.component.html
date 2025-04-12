@@ -1,0 +1,30 @@
+<p-button
+    label="< Back"
+    styleClass="p-button-link"
+    routerLink="/tours">
+</p-button>
+
+<div class="flex flex-1 tour-item-wrap">
+    @if (tour) {
+        <div>
+            <p-card
+        header="{{tour.name}}"
+        subheader="{{tour.price}}"
+        styleClass="p-card-shadow col-10 overflow-hidden"
+    >
+    <ng-template pTemplate="header">
+        <img src="/img/{{tour.img}}" alt="Card">
+    </ng-template>
+    <p>{{tour.description}}</p>
+    </p-card>
+        </div>
+    } @else {
+        Нет данных
+    }
+    
+    <div class="nearest-tour flex justify-content-center">
+        <app-nearest-tours 
+        (onTourChange)="onTourChanges($event)"
+        [tourNearest]="tour" />
+    </div>
+</div>

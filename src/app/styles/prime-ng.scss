@@ -1,0 +1,48 @@
+.p-card {
+    &:hover{
+    opacity: .9;
+    cursor: pointer;
+    }
+    &.tour-p-card {
+        height: 350px;
+        overflow: hidden;
+
+        & .p-card-header {
+            height: 180px;
+            & img {
+                object-fit: fill;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        & .p-card-content {
+            --webkit-mask-image: linear-gradient(180deg, #000 60%, transparent)
+        }
+    }
+
+}
+
+.p-menubar-item-content {
+    & .p-menubar-item-link-active {
+        color: #4c308d;
+        font-weight: bold;
+    }
+}
+
+.tour-item-galleria {
+   & .p-galleria-item {
+    height: 100px;
+        & > img {
+            height: 250px;
+        }
+    }
+}
+
+.p-button.p-button-link {
+    color: #ffffff;
+    font-size: large;
+    font-weight: 600;
+    border: 2px #0d2966;
+    border-radius: 5%;
+    background-color: #0d2966;
+}
