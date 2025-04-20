@@ -15,13 +15,14 @@ export const routes: Routes = [
         canActivate: [authGuard],
         component: LayoutComponent,
         children: [
-            { path: '', component: ToursComponent,},
-            { path: 'tour', redirectTo: '', pathMatch: 'full'},
+            { path: '', component: ToursComponent, data: {showAside: true}},
             { path: 'tour/:id', component: TourItemComponent},
+            { path: 'tour', redirectTo: '', pathMatch: 'full'},
         ]
      },
 
      { path: 'settings',
+      canActivate: [authGuard],
       component: SettingsComponent,
       children: [
         { path: '', redirectTo: 'change-password', pathMatch: 'full',},
