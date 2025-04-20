@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { API } from "../shared/api";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { ITour, ITourServerResponse } from "../models/tours";
 
 @Injectable({
@@ -9,6 +9,13 @@ import { ITour, ITourServerResponse } from "../models/tours";
 })
 
 export class ToursService {
+    //type
+    private tourTypeSubject = new Subject<any>();
+    readonly tourType$ = this.tourTypeSubject.asObservable();
+    //date
+    private tourDateSubject = new Subject<Date>();
+    readonly tourDate$ = this.tourDateSubject.asObservable();
+
     constructor(private http: HttpClient) {}
 
     getTours(): Observable<ITourServerResponse> {
@@ -39,6 +46,14 @@ export class ToursService {
         } else {
             return [];
         }
+    }
+
+    initChangeTourType(val: any): void {
+        this.tourTypeSubject.next(val);
+    }
+
+    initChangeTourDate(val: Date): void {
+        this.tourDateSubject.next(val);
     }
     
 }

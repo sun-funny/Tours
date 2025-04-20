@@ -11,6 +11,7 @@ import { SearchPipe } from '../../shared/pipes/search.pipe';
 import { FormsModule } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { HighlightActiveDirective } from '../../shared/directives/highlight-active.directive';
+import { isValid } from "date-fns";
 
 @Component({
   selector: 'app-tours',
@@ -37,11 +38,44 @@ export class ToursComponent implements OnInit {
     private router: Router){}
 
   ngOnInit(): void {
-    this.toursService.getTours().subscribe((data) => {
-      if (Array.isArray(data?.tours)) {
-        this.tours = data.tours;
-        this.toursStore = [...data.tours];
+    this.toursService.tourType$.subscribe((tour) => {
+      console.log('tour', tour)
+
+      switch (tour.key) {
+        case 'group':
+          this.tours = this. toursStore.filter((el) => el.type === 'group')
+        break;
+        case 'single':
+          this.tours = this. toursStore.filter((el) => el.type === 'single')
+        break;
+        case 'all':
+          this.tours = this. toursStore.filter((el) => el.type === 'all')
+        break;
       }
+   
+      })
+      // Date
+      this.toursService.tourDate$.subscribe((date) => {
+        console.log('****date', date);
+        this.tours = this.toursStore.filter((tour) => {
+          if (isValid(new Date(tour.date))) {
+            const tourDate = new Date(tour.date).setHours(0, 0, 0, 0);
+            const calendarDate = new Date(tour.date).setHours(0, 0, 0);
+            return tourDate === calendarDate;
+          } else {
+            return false
+          }
+        })
+      
+      console.log('activateRoute', this.route)
+
+      this.toursService.getTours().subscribe((data) => {
+        if (Array.isArray(data?.tours)) {
+          this.tours = data.tours;
+          this.toursStore = [...data.tours];
+        }
+      });
+
     });
   }
 
