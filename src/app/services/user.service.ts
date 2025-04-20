@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IUser } from "../models/user";
+import { IUser, UserStorageKey } from "../models/user";
 import { IUserRegister } from "../models/user";
 import { HttpClient } from "@angular/common/http";
 import { API } from "../shared/api";
@@ -24,16 +24,12 @@ export class UserService {
     }
 
     getUser(): IUser {
-        return this.currentUser || JSON.parse(sessionStorage.getItem('login'));
+        const userFormStorage = sessionStorage.getItem(UserStorageKey);
+        return this.currentUser || JSON.parse(userFormStorage);
     }
 
     setUser(user: IUser): void {
         this.currentUser = user;
-        if (user !== null) {
-            sessionStorage.setItem('login', JSON.stringify(user.login));
-        } else {
-            sessionStorage.setItem('login', '');
-        }
-        console.log(sessionStorage)
+        sessionStorage.setItem(UserStorageKey, JSON.stringify({login: user.login}));
     }
 }
