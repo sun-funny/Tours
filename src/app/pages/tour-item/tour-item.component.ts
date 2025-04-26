@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ToursService } from '../../services/tours.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CommonModule, NgIf, Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ITour } from '../../models/tours';
 import { NearestToursComponent } from './nearest-tours/nearest-tours/nearest-tours.component';
 
 @Component({
   selector: 'app-tour-item',
-  imports: [ButtonModule, CommonModule, NgIf, CardModule, RouterLink, NearestToursComponent],
+  imports: [ButtonModule, CommonModule, CardModule, RouterLink, NearestToursComponent],
   templateUrl: './tour-item.component.html',
   styleUrl: './tour-item.component.scss'
 })

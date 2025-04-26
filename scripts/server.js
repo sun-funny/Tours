@@ -7,6 +7,7 @@ const { log } = require('console');
 const userJson = "./server-data/users.json";
 const toursJson = "./server-data/tours.json";
 const countriesJson = "./server-data/countries.json";
+const orderJson = "./server-data/orders.json";
 const jsonFileData =  fs.readFileSync(userJson, 'utf-8');
 let  parseJsonData = JSON.parse(jsonFileData);
  
@@ -173,6 +174,36 @@ app.post('/auth', (req, res) => {
           throw new Error('Тур не найден по id:', paramId);
         }
     });
+ 
+        /*******************post order */
+        app.post('/order', (req, res) => { 
+          const jsonFileData =  fs.readFileSync(orderJson, 'utf-8', (err, data) => {}, (err) => {
+            console.log('err read orderJson tours', err);});
+                    // parse data
+            const  parseJsonData = JSON.parse(jsonFileData);
+            const order = req.body;
+            parseJsonData.orders.push(order)
+ 
+            const json = JSON.stringify({orders: parseJsonData.orders});
+ 
+            fs.writeFileSync(orderJson, json, 'utf-8', (data) => {}, (err) => {
+              console.log('err write file', err)
+            });
+            res.send('ok');
+        });
+ 
+ 
+            /*******************get ord */
+    app.get('/orders', (req, res) => { 
+      const jsonFileData =  fs.readFileSync(orderJson, 'utf-8', (err, data) => {}, (err) => {
+        console.log('err read file tours', err);});
+ 
+                // parse data
+        const  parseJsonData = JSON.parse(jsonFileData);
+ 
+        res.send(parseJsonData);
+    });
+ 
  
  
 // run and listen serve

@@ -9,6 +9,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoaderComponent } from '../shared/components/loader/loader.component';
 import { LoadedService } from '../services/loader.service';
 import { AsyncPipe } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-layout',
@@ -30,19 +31,20 @@ export class LayoutComponent implements OnInit, OnDestroy {
   loader$ = inject(LoadedService).loader$
 
   constructor(private router: Router, 
-    private activateRoute: ActivatedRoute) { }
+    private activateRoute: ActivatedRoute,
+    private cdRef: ChangeDetectorRef) { }
 
-  ngOnInit(): void {
-
-    this.showAside = this.recursFindChildData(this.activateRoute.snapshot, 'showAside')
-
-    this.subscription = this.router.events.pipe(
-      filter((routes) => routes instanceof ActivationEnd),
-      map((data) => data.snapshot)
-    ).subscribe((data) => {
-      this.showAside = this.recursFindChildData(data, 'showAside')
-    });
-  }
+    ngOnInit(): void {
+      this.showAside = this.recursFindChildData(this.activateRoute.snapshot, 'showAside');
+      
+      this.subscription = this.router.events.pipe(
+        filter((routes) => routes instanceof ActivationEnd),
+        map((data) => data.snapshot)
+      ).subscribe((data) => {
+        this.showAside = this.recursFindChildData(data, 'showAside');
+        this.cdRef.detectChanges();
+      });
+    }
 
   recursFindChildData(children: ActivatedRouteSnapshot, prop: string): boolean {
     console.log('children', children)
