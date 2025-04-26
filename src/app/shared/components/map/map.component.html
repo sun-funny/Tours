@@ -2,7 +2,7 @@
 
 <div *ngIf="weatherData" class="weather-info">
   <h3>Погода</h3>
-  <p>Текущая температура: {{ weatherData.current?.temperature_2m }}°C</p>
+  <p>Сейчас: {{ weatherData.current?.time }}</p>
   <p *ngIf="weatherData.current?.is_day !== undefined">
     {{ weatherData.current.is_day ? 'День' : 'Ночь' }}
   </p>

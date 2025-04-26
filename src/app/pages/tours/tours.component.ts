@@ -136,7 +136,7 @@ export class ToursComponent implements OnInit, OnDestroy {
         this.location = {
           lat: countryInfo.latlng[0], 
           lng: countryInfo.latlng[1],
-          name: countryInfo.name_ru // добавляем название страны
+          name: countryInfo.name
         };
         this.showModal = true;
       }
@@ -152,10 +152,10 @@ export class ToursComponent implements OnInit, OnDestroy {
           this.tours = this.tours.filter(tour => tour.id !== tourId);
           this.toursStore = this.toursStore.filter(tour => tour.id !== tourId);
           
-          console.log('Тур успешно удален');
+          console.log('Тур удален');
         },
         error: (err) => {
-          console.error('Ошибка при удалении тура:', err);
+          console.error('Не удалось удалить тур:', err);
         }
       });
     }

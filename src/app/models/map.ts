@@ -6,10 +6,10 @@ export interface IWeatherResponse {
 export type WeatherCurrentValue = 0 | 1;
 
 export interface IWeatherCurrent {
-    temperature_2m: number;
     is_day: boolean;
     rain: number;
     snowfall: number;
+    time: Date;
 }
 
 export interface IWeatherHourly {

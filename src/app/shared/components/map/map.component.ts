@@ -3,17 +3,22 @@ import { ILocation } from '../../../models/tours';
 import { mapService } from '../../../services/map.service';
 import { IWeatherResponse } from '../../../models/map';
 import { Subject, takeUntil } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 import Map from 'ol/Map.js';
 import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
 import View from 'ol/View.js';
+
+// project
 import * as olProj from 'ol/proj';
 
 @Component({
   selector: 'map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+  styleUrls: ['./map.component.scss'],
+  imports: [CommonModule],
+  standalone: true
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
   @Input() location: ILocation;
@@ -57,10 +62,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.weatherData = data;
-          console.log('Weather data:', this.weatherData);
+          console.log('Данные погоды:', this.weatherData);
+          if (data && data.current) {
+            this.weatherData = data;
+            console.log('Время:', data.current.time);
+            console.log('День или Ночь:', data.current.is_day);
+          } else {
+            console.warn('Данные current отсутствуют в ответе');
+          }
         },
         error: (err) => {
-          console.error('Error fetching weather:', err);
+          console.error('Ошибка погоды:', err);
         }
       });
   }
