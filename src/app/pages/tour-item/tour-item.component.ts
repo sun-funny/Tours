@@ -42,4 +42,8 @@ export class TourItemComponent implements OnInit {
     this.tour = ev;
     this.location.replaceState('tours/tour/'+this.tour.id)
   }
+
+  initOrder(ev: Event): void {
+    this.router.navigate(['/tours/order', this.tour.id])
+  }
 }
