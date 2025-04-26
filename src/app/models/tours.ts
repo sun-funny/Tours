@@ -10,6 +10,7 @@ export interface ITour {
     locationId: string;
     country?: ICountriesResponseItem;
     code?: string;
+    inBasket?: boolean;
 }
 
 export interface ITourServerResponse {

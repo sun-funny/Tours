@@ -15,6 +15,7 @@ import { isValid } from "date-fns";
 import { Subject, takeUntil } from 'rxjs';
 import { MapComponent } from '../../shared/components/map/map.component';
 import { DialogModule } from 'primeng/dialog';
+import { BasketService } from '../../services/basket.service';
 
 @Component({
   selector: 'app-tours',
@@ -45,7 +46,8 @@ export class ToursComponent implements OnInit, OnDestroy {
   
   constructor(private toursService: ToursService,
     private route: ActivatedRoute,
-    private router: Router){}
+    private router: Router,
+    private basketService: BasketService){}
 
   ngOnInit(): void {
 
@@ -159,6 +161,16 @@ export class ToursComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  setItemToBasket(ev: Event, item: ITour): void {
+    ev.stopPropagation();
+    this.basketService.setItemToBasket(item);
+  }
+
+  removeItemFromBasket(ev: Event, item: ITour): void {
+    ev.stopPropagation();
+    this.basketService.removeItemFromBasket(item);
   }
 
  }

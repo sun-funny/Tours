@@ -45,6 +45,14 @@
             </p-button>
 
             </p-card>
+            <div>
+                @if(!item.inBasket) {
+                    <i (click)="setItemToBasket($event, item)" class="pi pi-cart-plus" style="color: green"></i>
+                }
+                @else {
+                    <i (click)="removeItemFromBasket($event, item)" class="pi pi-cart-minus" style="color: red"></i>
+                }
+            </div>
         </div>
     }
     @empty {

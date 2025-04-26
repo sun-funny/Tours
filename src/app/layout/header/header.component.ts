@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
@@ -6,10 +6,18 @@ import { MenuItem } from 'primeng/api';
 import { IUser } from '../../models/user';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
-
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { BasketService } from '../../services/basket.service';
+import { Observable } from 'rxjs';
+import { ITour } from '../../models/tours';
 @Component({
   selector: 'app-header',
-  imports: [DatePipe, MenubarModule, ButtonModule],
+  imports: [
+    DatePipe, 
+    MenubarModule, 
+    ButtonModule,
+    OverlayBadgeModule,
+    AsyncPipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -18,10 +26,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
   user: IUser;
   logoutIcon = 'pi pi-user'
+  basketStore$: Observable<ITour[]> = null;
 
-  constructor(private userService: UserService, private router: Router, private NgZone: NgZone) {}
+  constructor(
+    private userService: UserService, 
+    private router: Router, 
+    private NgZone: NgZone,
+    private basketService: BasketService
+  ) {}
 
   ngOnInit(): void {
+
+    this.basketStore$ = this.basketService.basketStore$;
+
     this.user = this.userService.getUser();
     this.menuItems = this.initMenuItems();
 
