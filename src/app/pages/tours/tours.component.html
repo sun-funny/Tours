@@ -29,6 +29,19 @@
                 <img src="/img/{{item.img}}" class="w-full" alt="Card">
             </ng-template>
             <p>{{item.description}}</p>
+            <p (click)="getCountryDetail($event, item.country?.iso_code2)">
+                Страна: {{item.country?.name_ru}} 
+                <img [src]="item.country?.flag_url"/>
+            </p>
+
+            <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [text]="true" 
+                (click)="deleteTour($event, item.id)"
+                label="Удалить"
+                styleClass="p-button-sm">
+            </p-button>
 
             </p-card>
         </div>
@@ -37,3 +50,17 @@
         <div class="no data">Нет данных</div>
     }
 </div>
+
+<p-dialog [(visible)]="showModal" [modal]="true" [style]="{ width: '50rem' }">
+    <ng-template #header>
+        <p>Погода в {{location?.name}}</p>
+    </ng-template>
+    
+    @if (showModal) {
+        <map [location]="location"></map>
+    }
+    
+    <ng-template #footer>
+        <p-button label="Закрыть" [text]="true" severity="secondary" (click)="showModal = false" />
+    </ng-template>
+</p-dialog>

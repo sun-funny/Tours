@@ -1,15 +1,25 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MenubarModule } from 'primeng/menubar';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, Router, RouterModule } from '@angular/router';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { AsideComponent } from './aside/aside.component';
 import { filter, map, Subscription, take, tap } from 'rxjs';
 import { routes } from '../app.routes';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { LoaderComponent } from '../shared/components/loader/loader.component';
+import { LoadedService } from '../services/loader.service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterModule, FooterComponent, HeaderComponent, AsideComponent],
+  imports: [
+    RouterModule, 
+    FooterComponent, 
+    HeaderComponent, 
+    AsideComponent,
+    LoaderComponent,
+    AsyncPipe
+  ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -17,7 +27,10 @@ import { routes } from '../app.routes';
 export class LayoutComponent implements OnInit, OnDestroy {
   showAside = false;
   subscription: Subscription;
-  constructor(private router: Router, private activateRoute: ActivatedRoute) { }
+  loader$ = inject(LoadedService).loader$
+
+  constructor(private router: Router, 
+    private activateRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
 

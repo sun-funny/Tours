@@ -1,0 +1,18 @@
+<div #map class="map-container"></div>
+
+<div *ngIf="weatherData" class="weather-info">
+  <h3>Погода</h3>
+  <p>Текущая температура: {{ weatherData.current?.temperature_2m }}°C</p>
+  <p *ngIf="weatherData.current?.is_day !== undefined">
+    {{ weatherData.current.is_day ? 'День' : 'Ночь' }}
+  </p>
+  <p *ngIf="weatherData.current?.rain">Дождь: {{ weatherData.current.rain }} мм</p>
+  <p *ngIf="weatherData.current?.snowfall">Снег: {{ weatherData.current.snowfall }} см</p>
+  
+  <h4>Прогноз на сегодня:</h4>
+  <div *ngIf="weatherData.hourly">
+    <div *ngFor="let hour of weatherData.hourly.time | slice:0:24; let i = index">
+      Час {{ i }}: {{ weatherData.hourly.temperature_2m[i] }}°C
+    </div>
+  </div>
+</div>

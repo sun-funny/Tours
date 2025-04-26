@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ToursService } from '../../services/tours.service';
 import { CardModule } from 'primeng/card';
 import { ActivatedRoute, Route, Router } from '@angular/router';
@@ -6,12 +6,15 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { ITour } from '../../models/tours';
+import { IFilterTypeLogic, ILocation, ITour } from '../../models/tours';
 import { SearchPipe } from '../../shared/pipes/search.pipe';
 import { FormsModule } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
 import { HighlightActiveDirective } from '../../shared/directives/highlight-active.directive';
 import { isValid } from "date-fns";
+import { Subject, takeUntil } from 'rxjs';
+import { MapComponent } from '../../shared/components/map/map.component';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-tours',
@@ -23,60 +26,57 @@ import { isValid } from "date-fns";
     InputTextModule, 
     SearchPipe, 
     FormsModule,
-    HighlightActiveDirective],
+    HighlightActiveDirective,
+    MapComponent,
+    DialogModule],
   templateUrl: './tours.component.html',
   styleUrl: './tours.component.scss'
 })
 
-export class ToursComponent implements OnInit {
+export class ToursComponent implements OnInit, OnDestroy {
   tours: ITour[] = [];
   toursStore: ITour[] = [];
   searchValue = '';
+  dateTourFilter: Date;
+  typeTourFilter: IFilterTypeLogic = {key: 'all'};
+  destroyer = new Subject<boolean>();
+  showModal = false;
+  location: ILocation = null;
   
   constructor(private toursService: ToursService,
     private route: ActivatedRoute,
     private router: Router){}
 
   ngOnInit(): void {
-    this.toursService.tourType$.subscribe((tour) => {
-      console.log('tour', tour)
 
-      switch (tour.key) {
-        case 'group':
-          this.tours = this. toursStore.filter((el) => el.type === 'group')
-        break;
-        case 'single':
-          this.tours = this. toursStore.filter((el) => el.type === 'single')
-        break;
-        case 'all':
-          this.tours = this. toursStore.filter((el) => el.type === 'all')
-        break;
-      }
-   
+      //Types
+      this.toursService.tourType$.pipe(takeUntil(this.destroyer)).subscribe((tour) => {
+        this.typeTourFilter = tour;
+        this.initTourFilterLogic();
       })
-      // Date
-      this.toursService.tourDate$.subscribe((date) => {
-        console.log('****date', date);
-        this.tours = this.toursStore.filter((tour) => {
-          if (isValid(new Date(tour.date))) {
-            const tourDate = new Date(tour.date).setHours(0, 0, 0, 0);
-            const calendarDate = new Date(tour.date).setHours(0, 0, 0);
-            return tourDate === calendarDate;
-          } else {
-            return false
-          }
-        })
-      
+
+      //Date
+      this.toursService.tourDate$.pipe(takeUntil(this.destroyer)).subscribe((date) => {
+        this.dateTourFilter = date;
+        this.initTourFilterLogic();
+      })
+
       console.log('activateRoute', this.route)
 
       this.toursService.getTours().subscribe((data) => {
-        if (Array.isArray(data?.tours)) {
-          this.tours = data.tours;
-          this.toursStore = [...data.tours];
+        if (Array.isArray(data)) {
+          this.tours = data;
+          this.toursStore = [...data];
         }
-      });
+      }, (err) => {
+        console.log('****', err)
 
-    });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyer.next(true);
+    this.destroyer.complete();
   }
 
   goToTour(item: any): void {
@@ -96,4 +96,69 @@ export class ToursComponent implements OnInit {
       this.goToTour(targetTour);
     }
   }
+
+  initTourFilterLogic(): void {
+
+    // Type
+    if (this.typeTourFilter.key) {
+      switch (this.typeTourFilter.key) {
+        case 'group':
+          this.tours = this. toursStore.filter((el) => el.type === 'group')
+        break;
+        case 'single':
+          this.tours = this. toursStore.filter((el) => el.type === 'single')
+        break;
+        case 'all':
+          this.tours = this. toursStore.filter((el) => el.type === 'all')
+        break;
+      }     
+    }
+
+    //Date
+    if (this.dateTourFilter) {
+        this.tours = this.toursStore.filter((tour) => {
+          if (this.dateTourFilter && isValid(new Date(tour.date))) {
+            const tourDate = new Date(tour.date).setHours(0, 0, 0, 0);
+            const calendarDate = new Date(tour.date).setHours(0, 0, 0);
+            return tourDate === calendarDate;
+          } else {
+            return false
+          }
+        })
+    }
+  }
+
+  getCountryDetail(ev: Event, code: string): void {
+    ev.stopImmediatePropagation();
+    this.toursService.getCountryByCode(code).subscribe((data) => {
+      if (data) {
+        const countryInfo = data.countrieData;
+        this.location = {
+          lat: countryInfo.latlng[0], 
+          lng: countryInfo.latlng[1],
+          name: countryInfo.name_ru // добавляем название страны
+        };
+        this.showModal = true;
+      }
+    });
+  }
+
+  deleteTour(ev: Event, tourId: string): void {
+    ev.stopImmediatePropagation();
+    
+    if (confirm('Вы уверены, что хотите удалить этот тур?')) {
+      this.toursService.deleteTourById(tourId).subscribe({
+        next: () => {
+          this.tours = this.tours.filter(tour => tour.id !== tourId);
+          this.toursStore = this.toursStore.filter(tour => tour.id !== tourId);
+          
+          console.log('Тур успешно удален');
+        },
+        error: (err) => {
+          console.error('Ошибка при удалении тура:', err);
+        }
+      });
+    }
+  }
+
  }

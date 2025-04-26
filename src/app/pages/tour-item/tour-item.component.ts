@@ -27,8 +27,8 @@ export class TourItemComponent implements OnInit {
 
     // Загрузить тур по полученному ID
     this.tourService.getTours().subscribe((data) => {
-      if (Array.isArray(data?.tours)) {
-        this.tour = data.tours.find(tour => tour.id === this.tourId);
+      if (Array.isArray(data)) {
+        this.tour = data.find(tour => tour.id === this.tourId);
         console.log('tour:', this.tour);
       }
     });
