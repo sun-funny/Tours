@@ -4,8 +4,11 @@ import { MessageService } from 'primeng/api';
 import { catchError, tap, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next) => {
+  
   const messageService = inject(MessageService);
+
   return next(req).pipe(
+
     tap((req) => {
       console.log('responce', req);
     }),
