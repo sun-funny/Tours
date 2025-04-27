@@ -20,7 +20,7 @@ export class BasketService {
     }
 
     removeItemFromBasket(item: ITour): void {
-        this.basketStore = this.basketStore.filter((tour) => tour !== item);
+        this.basketStore = this.basketStore.filter((tour) => tour.id !== item.id);
         item.inBasket = false;
         this.basketSubject.next(this.basketStore)
     }

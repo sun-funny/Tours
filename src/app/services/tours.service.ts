@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { API } from "../shared/api";
-import { catchError, delay, forkJoin, map, Observable, of, Subject, switchMap, tap } from "rxjs";
+import { catchError, delay, forkJoin, map, Observable, of, Subject, switchMap, tap, withLatestFrom } from "rxjs";
 import { Coords, ICountriesResponseItem, ITour, ITourServerResponse } from "../models/tours";
 import { mapService } from "./map.service"; 
 import { LoadedService } from "./loader.service";
+import { BasketService } from "./basket.service";
 
 @Injectable({
     providedIn: 'root'
@@ -18,7 +19,10 @@ export class ToursService {
     private tourDateSubject = new Subject<Date>();
     readonly tourDate$ = this.tourDateSubject.asObservable();
 
-    constructor(private http: HttpClient, private mapService: mapService, private loaderService: LoadedService) {} 
+    constructor(private http: HttpClient, 
+        private mapService: mapService, 
+        private loaderService: LoadedService,
+        private basketService: BasketService) {} 
 
     getTours(): Observable<ITour[]> {
 
@@ -31,7 +35,9 @@ export class ToursService {
         // parallel
         return forkJoin<[ICountriesResponseItem[], ITourServerResponse]>([countries, tours]).pipe(
             delay(1000),
-            map((data) => {
+            withLatestFrom(this.basketService.basketStore$),
+            map(([data, basketData]) => {
+
                 let toursWithCountries = [] as ITour[];
                 const toursArr = data[1].tours;
                 const countriesMap = new Map(); 
@@ -42,6 +48,11 @@ export class ToursService {
 
                 if (Array.isArray(toursArr)) {
                     toursWithCountries = toursArr.map((tour) => {
+                        const isTourInBasket = basketData.find((basketTour) => basketTour.id === tour.id)
+
+                        if (isTourInBasket) {
+                            tour.inBasket = true;
+                        }
                         return {
                             ...tour,
                             country: countriesMap.get(tour.code) || null
