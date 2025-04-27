@@ -30,7 +30,7 @@
             </ng-template>
             
             <p>{{item.description}}</p>
-            <p (click)="getCountryDetail($event, item.country?.iso_code2)">
+            <p (click)="getCountryDetail($event, item.country?.iso_code2, item)">
                 Страна: {{item.country?.name_ru}} 
                 <img [src]="item.country?.flag_url"/>
             </p>
@@ -63,7 +63,10 @@
 <p-dialog [(visible)]="showModal" [modal]="true" [style]="{ width: '50rem' }">
   
     @if (showModal) {
-        <map [location]="location"></map>
+        <map [location]="location">
+            <p>Тур {{selectedTour.name}}</p>
+            <p-card></p-card>
+        </map>
     }
     
     <ng-template #footer>

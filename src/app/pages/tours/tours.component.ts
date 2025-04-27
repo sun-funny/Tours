@@ -43,6 +43,7 @@ export class ToursComponent implements OnInit, OnDestroy {
   destroyer = new Subject<boolean>();
   showModal = false;
   location: ILocation = null;
+  selectedTour: ITour = null;
   
   constructor(private toursService: ToursService,
     private route: ActivatedRoute,
@@ -130,7 +131,7 @@ export class ToursComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCountryDetail(ev: Event, code: string): void {
+  getCountryDetail(ev: Event, code: string, tour: ITour): void {
     ev.stopImmediatePropagation();
     this.toursService.getCountryByCode(code).subscribe((data) => {
       if (data) {
@@ -140,6 +141,7 @@ export class ToursComponent implements OnInit, OnDestroy {
           lng: countryInfo.latlng[1],
           name: countryInfo.name
         };
+        this.selectedTour = tour;
         this.showModal = true;
       }
     });

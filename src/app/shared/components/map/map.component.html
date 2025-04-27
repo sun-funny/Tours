@@ -1,5 +1,6 @@
+<ng-content></ng-content>
 <div #map class="map-container"></div>
-
+<ng-content select="p-card"></ng-content>
 <div *ngIf="weatherData" class="weather-info">
   <h3>Погода</h3>
   <p>Сейчас: {{ weatherData.current?.time }}</p>
