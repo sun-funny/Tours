@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
 import { UserService } from '../../services/user.service';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
   selector: 'app-order',
@@ -26,6 +27,11 @@ export class OrderComponent implements OnInit{
   tourId: string = null;
   tour: ITour = null; 
   userForm: FormGroup;
+  userFormFieldsArr = [
+    {label: 'Имя', placeHolder: 'Введите имя', control: 'firstName'},
+    {label: 'Фамилия', placeHolder: 'Введите фамилию', control: 'lastName'},
+    {label: 'Номер карты', placeHolder: 'Введите номер карты', control: 'cardNumber'}
+  ]
 
   constructor(private tourService: ToursService,
               private route: ActivatedRoute,
@@ -44,13 +50,14 @@ export class OrderComponent implements OnInit{
     );
 
     this.userForm = new FormGroup({
-      firstName: new FormControl('', {validators: Validators.required}),
+      firstName: new FormControl('', Validators.required),
       lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
       cardNumber: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      birthDate: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      age: new FormControl('', [Validators.required]),
-      citizenship: new FormControl('', [Validators.required]),
-    })
+      birthDate: new FormControl('', Validators.required),
+      age: new FormControl('', [Validators.required, Validators.min(0)]),
+      citizenship: new FormControl('', Validators.required),
+    });
+
   }
 
   initOrder(): void {
@@ -61,6 +68,14 @@ export class OrderComponent implements OnInit{
       tourId: this.tourId,
       personalData: [personalData]
     }
-    this.tourService.postOrder(postObj).subscribe();
+    
+    this.tourService.postOrder(postObj).subscribe({
+      next: (response) => {
+        console.log('Order successful:', response);
+      },
+      error: (error) => {
+        console.error('Order failed:', error);
+      }
+    });
   }
 }

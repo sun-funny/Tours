@@ -1,5 +1,1 @@
-{
-    "orders": [
- 
-    ]
-}
+{"orders":[{"userLogin":"Marie","tourId":"1-1","personalData":[{"firstName":"Marie","lastName":"Yushkova","cardNumber":"1234567890","birthDate":"1986-11-01T21:00:00.000Z","age":38,"citizenship":"Russia"}]},{"userLogin":"Marie","tourId":"1-1","personalData":[{"firstName":"Marie","lastName":"Yushkova","cardNumber":"1234567890","birthDate":"1986-11-01T21:00:00.000Z","age":38,"citizenship":"Russia"}]}]}
