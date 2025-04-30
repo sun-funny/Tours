@@ -3,17 +3,15 @@
         <p-menubar [model]="menuItems" />
     </div>
     <div class="layout-header__right-block">
-
         <div class="user-info"></div>
         <div class="basket mr-4">
             <p-overlaybadge
                 badgeSize="small"
-                [value]="(basketStore$ | async).length"
+                [value]="(basketStore$ | async)?.length"
                 severity="danger">
-                <div cass="basket-icon-wrap">
+                <div class="basket-icon-wrap" (click)="showBasketDialog()">
                     <i class="pi pi-cart-arrow-down"></i>
                 </div>
-
             </p-overlaybadge>
         </div>
         <div class="logout">
@@ -28,7 +26,6 @@
             >
             </p-button> 
         </div>
-
         <div class="date">
             <div>
                 {{dateTime | date: 'HH:mm:ss'}}
@@ -38,4 +35,12 @@
             </div>
         </div>
     </div>
+
+    <p-dialog 
+        header="Корзина туров" 
+        [(visible)]="displayBasketDialog" 
+        [style]="{ width: '50vw' }" 
+        [modal]="true">
+        <app-basket *ngIf="displayBasketDialog"></app-basket>
+    </p-dialog>
 </div>

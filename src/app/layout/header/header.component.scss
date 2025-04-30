@@ -17,6 +17,7 @@
 
     &__right-block {
         display: flex;
+        align-items: center;
 
         &.user-info {
             width: 100px;
@@ -25,10 +26,16 @@
         & .basket {
             display: flex;
             align-items: center;
+            cursor: pointer;
+            
             & .basket-icon-wrap {
                 position: relative;
-                top: 10px;
-                font-size: 0.8rem;
+                font-size: 1.5rem;
+                padding: 0.5rem;
+                
+                &:hover {
+                    color: #17ce36;
+                }
             }
         }
     }
